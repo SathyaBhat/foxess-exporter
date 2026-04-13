@@ -12,7 +12,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" \
     -o /foxess-exporter ./cmd/exporter
 
 # ── Final minimal image ──────────────────────────────────────────────────────
-FROM scratch
+FROM alpine
 
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /foxess-exporter /foxess-exporter
