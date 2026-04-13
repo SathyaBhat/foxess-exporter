@@ -16,6 +16,7 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -40,7 +41,7 @@ func New(apiKey, baseURL string) *Client {
 		baseURL = "https://www.foxesscloud.com"
 	}
 	return &Client{
-		apiKey:  apiKey,
+		apiKey:  strings.TrimSpace(apiKey),
 		baseURL: baseURL,
 		http:    &http.Client{Timeout: 30 * time.Second},
 	}
