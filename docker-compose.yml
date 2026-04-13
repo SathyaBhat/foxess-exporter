@@ -10,6 +10,8 @@ services:
   foxess-exporter:
     build: .
     container_name: foxess-exporter
+    dns:
+      - 1.1.1.1
     env_file:
       - path: .env
     networks:
