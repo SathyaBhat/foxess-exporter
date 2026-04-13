@@ -75,7 +75,7 @@ func TestClient_Headers_ContainsRequiredFields(t *testing.T) {
 		capturedHeader = r.Header.Clone()
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(apiResp(0, map[string]any{
-			"devices": []any{}, "currentPage": 1, "pageSize": 20, "total": 0,
+			"data": []any{}, "currentPage": 1, "pageSize": 20, "total": 0,
 		}))
 	}))
 	t.Cleanup(srv2.Close)
@@ -108,7 +108,7 @@ func TestClient_ListDevices_SinglePage(t *testing.T) {
 		{"deviceSN": "SN002", "moduleSN": "M002", "productType": "H1", "status": 1, "stationID": "ST1", "stationName": "My Home"},
 	}
 	body := apiResp(0, map[string]any{
-		"devices": devices, "currentPage": 1, "pageSize": 20, "total": 2,
+		"data": devices, "currentPage": 1, "pageSize": 20, "total": 2,
 	})
 	srv := newServer(t, "/op/v0/device/list", http.StatusOK, body)
 
@@ -131,12 +131,12 @@ func TestClient_ListDevices_Pagination(t *testing.T) {
 		switch n {
 		case 1:
 			result = map[string]any{
-				"devices":     []map[string]any{{"deviceSN": "SN001"}, {"deviceSN": "SN002"}},
+				"data":     []map[string]any{{"deviceSN": "SN001"}, {"deviceSN": "SN002"}},
 				"currentPage": 1, "pageSize": 2, "total": 3,
 			}
 		default:
 			result = map[string]any{
-				"devices":     []map[string]any{{"deviceSN": "SN003"}},
+				"data":     []map[string]any{{"deviceSN": "SN003"}},
 				"currentPage": 2, "pageSize": 2, "total": 3,
 			}
 		}
@@ -155,7 +155,7 @@ func TestClient_ListDevices_Pagination(t *testing.T) {
 
 func TestClient_ListDevices_Empty(t *testing.T) {
 	body := apiResp(0, map[string]any{
-		"devices": []any{}, "currentPage": 1, "pageSize": 20, "total": 0,
+		"data": []any{}, "currentPage": 1, "pageSize": 20, "total": 0,
 	})
 	srv := newServer(t, "/op/v0/device/list", http.StatusOK, body)
 

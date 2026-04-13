@@ -68,7 +68,7 @@ func (f *fakeFoxESS) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	case "/op/v0/device/list":
 		f.listCalls++
 		write(map[string]any{
-			"devices":     f.devices,
+			"data":        f.devices,
 			"currentPage": 1,
 			"pageSize":    20,
 			"total":       len(f.devices),

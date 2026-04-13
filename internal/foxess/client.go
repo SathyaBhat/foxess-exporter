@@ -102,13 +102,14 @@ func doRequest[T any](c *Client, method, path string, body any) (T, error) {
 	}
 	defer resp.Body.Close()
 
+	raw, _ := io.ReadAll(resp.Body)
+
 	if resp.StatusCode != http.StatusOK {
-		raw, _ := io.ReadAll(resp.Body)
 		return zero, fmt.Errorf("HTTP %d: %s", resp.StatusCode, string(raw))
 	}
 
 	var parsed apiResponse[T]
-	if err := json.NewDecoder(resp.Body).Decode(&parsed); err != nil {
+	if err := json.Unmarshal(raw, &parsed); err != nil {
 		return zero, fmt.Errorf("decode response: %w", err)
 	}
 	if parsed.Errno != 0 {
@@ -127,7 +128,7 @@ type DeviceListRequest struct {
 }
 
 type DeviceListResult struct {
-	Devices    []Device `json:"devices"`
+	Devices    []Device `json:"data"`
 	CurrentPage int     `json:"currentPage"`
 	PageSize    int     `json:"pageSize"`
 	Total       int     `json:"total"`
@@ -145,7 +146,7 @@ type Device struct {
 // ListDevices returns all devices (inverters) on the account.
 func (c *Client) ListDevices() ([]Device, error) {
 	type pageResult struct {
-		Devices    []Device `json:"devices"`
+		Devices    []Device `json:"data"`
 		CurrentPage int     `json:"currentPage"`
 		PageSize    int     `json:"pageSize"`
 		Total       int     `json:"total"`
