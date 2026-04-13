@@ -10,7 +10,6 @@ services:
   foxess-exporter:
     build: .
     container_name: foxess-exporter
-    restart: unless-stopped
     env_file:
       - path: .env
     networks:
