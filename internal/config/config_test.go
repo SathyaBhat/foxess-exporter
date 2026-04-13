@@ -235,6 +235,21 @@ exporter:
 	assert.Equal(t, 48*time.Hour, cfg.Exporter.BackfillMaxAge, "env should override backfill_max_age")
 }
 
+func TestLoad_EnvVarsOnly_NoConfigFile(t *testing.T) {
+	// Simulate a pure-env deployment (no config.yaml mounted).
+	t.Setenv("FOXESS_API_KEY", "env-only-key")
+	t.Setenv("INFLUXDB_HOST", "http://env-influx:8086")
+	t.Setenv("INFLUXDB_TOKEN", "env-only-token")
+
+	cfg, err := config.Load("")
+	require.NoError(t, err)
+
+	assert.Equal(t, "env-only-key", cfg.FoxESS.APIKey)
+	assert.Equal(t, "http://env-influx:8086", cfg.InfluxDB.Host)
+	assert.Equal(t, "env-only-token", cfg.InfluxDB.Token)
+	assert.Equal(t, "foxess", cfg.InfluxDB.Database, "default database should apply")
+}
+
 func TestLoad_BackfillDefaults(t *testing.T) {
 	path := writeTempConfig(t, `
 foxess:

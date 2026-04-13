@@ -97,8 +97,23 @@ func Load(cfgFile string) (*Config, error) {
 
 	// No prefix: the top-level section name (foxess, influxdb, exporter, log)
 	// already acts as the natural namespace, e.g. FOXESS_API_KEY, INFLUXDB_HOST.
+	//
+	// AutomaticEnv alone only reads env vars for keys Viper already knows about
+	// (defaults or config file).  BindEnv ensures env vars are read even when
+	// running without a config file (e.g. pure-env Docker deployments).
 	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	v.AutomaticEnv()
+	_ = v.BindEnv("foxess.api_key", "FOXESS_API_KEY")
+	_ = v.BindEnv("foxess.base_url", "FOXESS_BASE_URL")
+	_ = v.BindEnv("foxess.device_sn", "FOXESS_DEVICE_SN")
+	_ = v.BindEnv("influxdb.host", "INFLUXDB_HOST")
+	_ = v.BindEnv("influxdb.token", "INFLUXDB_TOKEN")
+	_ = v.BindEnv("influxdb.database", "INFLUXDB_DATABASE")
+	_ = v.BindEnv("exporter.realtime_interval", "EXPORTER_REALTIME_INTERVAL")
+	_ = v.BindEnv("exporter.report_interval", "EXPORTER_REPORT_INTERVAL")
+	_ = v.BindEnv("exporter.backfill_enabled", "EXPORTER_BACKFILL_ENABLED")
+	_ = v.BindEnv("exporter.backfill_max_age", "EXPORTER_BACKFILL_MAX_AGE")
+	_ = v.BindEnv("log.level", "LOG_LEVEL")
 
 	if err := v.ReadInConfig(); err != nil {
 		// A missing config file is fine – env vars alone are sufficient.
