@@ -52,7 +52,10 @@ func New(apiKey, baseURL string) *Client {
 // --------------------------------------------------------------------------
 
 func sign(path, token string, tsMs int64) string {
-	raw := fmt.Sprintf("%s\r\n%s\r\n%d", path, token, tsMs)
+	// FoxESS docs show a Python fr-string: fr'{path}\r\n{token}\r\n{timestamp}'
+	// The raw-string prefix means \r\n is the literal 4-char sequence "\r\n",
+	// NOT actual CRLF bytes.
+	raw := path + `\r\n` + token + `\r\n` + strconv.FormatInt(tsMs, 10)
 	//nolint:gosec // FoxESS mandates MD5
 	return fmt.Sprintf("%x", md5.Sum([]byte(raw)))
 }

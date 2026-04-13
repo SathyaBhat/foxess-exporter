@@ -6,6 +6,7 @@ package foxess
 import (
 	"crypto/md5" //nolint:gosec
 	"fmt"
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -14,9 +15,12 @@ import (
 
 // wantSign computes the expected signature independently of sign() so we have
 // a separate reference implementation to compare against.
+// Uses literal \r\n (4 chars) matching the FoxESS Python example:
+//
+//	fr'{path}\r\n{token}\r\n{timestamp}'
 func wantSign(path, token string, tsMs int64) string {
-	raw := fmt.Sprintf("%s\r\n%s\r\n%d", path, token, tsMs) //nolint:gosec
-	return fmt.Sprintf("%x", md5.Sum([]byte(raw)))           //nolint:gosec
+	raw := path + `\r\n` + token + `\r\n` + strconv.FormatInt(tsMs, 10) //nolint:gosec
+	return fmt.Sprintf("%x", md5.Sum([]byte(raw)))                       //nolint:gosec
 }
 
 func TestSign_Format(t *testing.T) {
@@ -57,19 +61,27 @@ func TestSign_MatchesReferenceImpl(t *testing.T) {
 	}
 }
 
-// TestSign_UsesCarriageReturnNewline verifies that the separator is CRLF (\r\n)
-// and not just LF (\n), as mandated by the FoxESS API docs.
-func TestSign_UsesCarriageReturnNewline(t *testing.T) {
+// TestSign_UsesLiteralBackslashRN verifies that the separator is the 4-character
+// literal sequence "\r\n" (backslash-r-backslash-n), NOT actual CRLF bytes.
+// The FoxESS API Python example uses fr'{path}\r\n{token}\r\n{timestamp}' where
+// the raw-string prefix makes \r\n literal characters, not escape sequences.
+func TestSign_UsesLiteralBackslashRN(t *testing.T) {
 	const path, token = "/test", "k"
 	const tsMs = int64(1)
 
-	// Compute what an LF-only implementation would produce.
-	rawLFOnly := fmt.Sprintf("%s\n%s\n%d", path, token, tsMs) //nolint:gosec
-	lfOnly := fmt.Sprintf("%x", md5.Sum([]byte(rawLFOnly)))   //nolint:gosec
+	// What the correct implementation produces (literal \r\n separator).
+	rawLiteral := path + `\r\n` + token + `\r\n` + "1" //nolint:gosec
+	wantLiteral := fmt.Sprintf("%x", md5.Sum([]byte(rawLiteral))) //nolint:gosec
+
+	// What a CRLF implementation would produce (wrong).
+	rawCRLF := fmt.Sprintf("%s\r\n%s\r\n%d", path, token, tsMs) //nolint:gosec
+	wrongCRLF := fmt.Sprintf("%x", md5.Sum([]byte(rawCRLF)))    //nolint:gosec
 
 	got := sign(path, token, tsMs)
-	assert.NotEqual(t, lfOnly, got,
-		"sign must use \\r\\n separators, not bare \\n")
+	assert.Equal(t, wantLiteral, got,
+		"sign must use literal \\r\\n separator (4 chars), not CRLF bytes")
+	assert.NotEqual(t, wrongCRLF, got,
+		"sign must NOT use actual CRLF bytes as separator")
 }
 
 // TestSign_InputOrder verifies that path, token, timestamp appear in that order.
