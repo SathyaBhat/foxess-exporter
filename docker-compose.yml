@@ -13,13 +13,14 @@ services:
     environment:
       # Environment variables override config.yaml values.
       # Uncomment and set these instead of (or alongside) config.yaml:
-      # FOXESS_FOXESS_API_KEY: "YOUR_FOXESS_API_KEY"
-      # FOXESS_FOXESS_DEVICE_SN: ""
-      # FOXESS_INFLUXDB_HOST: "http://influxdb:8086"
-      # FOXESS_INFLUXDB_TOKEN: "your-influxdb-token"
-      # FOXESS_INFLUXDB_DATABASE: "foxess"
-      # FOXESS_EXPORTER_REALTIME_INTERVAL: "60s"
-      # FOXESS_LOG_LEVEL: "info"
+      # FOXESS_API_KEY: "YOUR_FOXESS_API_KEY"
+      # FOXESS_DEVICE_SN: ""
+      # INFLUXDB_HOST: "http://influxdb:8086"
+      # INFLUXDB_TOKEN: "your-influxdb-token"
+      # INFLUXDB_DATABASE: "foxess"
+      # EXPORTER_REALTIME_INTERVAL: "60s"
+      # EXPORTER_BACKFILL_ENABLED: "true"
+      # LOG_LEVEL: "info"
 
   # ── InfluxDB v3 (Core OSS) ───────────────────────────────────────────────
   influxdb:

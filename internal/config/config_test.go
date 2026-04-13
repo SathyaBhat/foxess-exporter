@@ -180,12 +180,12 @@ influxdb:
   token: "file-token"
   database: "file_db"
 `)
-	t.Setenv("FOXESS_FOXESS_API_KEY", "env-api-key")
-	t.Setenv("FOXESS_FOXESS_DEVICE_SN", "env-sn")
-	t.Setenv("FOXESS_INFLUXDB_HOST", "http://env-influx:8086")
-	t.Setenv("FOXESS_INFLUXDB_TOKEN", "env-token")
-	t.Setenv("FOXESS_INFLUXDB_DATABASE", "env_db")
-	t.Setenv("FOXESS_LOG_LEVEL", "warn")
+	t.Setenv("FOXESS_API_KEY", "env-api-key")
+	t.Setenv("FOXESS_DEVICE_SN", "env-sn")
+	t.Setenv("INFLUXDB_HOST", "http://env-influx:8086")
+	t.Setenv("INFLUXDB_TOKEN", "env-token")
+	t.Setenv("INFLUXDB_DATABASE", "env_db")
+	t.Setenv("LOG_LEVEL", "warn")
 
 	cfg, err := config.Load(path)
 	require.NoError(t, err)
@@ -206,7 +206,7 @@ influxdb:
   host: "http://localhost:8086"
   token: "token"
 `)
-	t.Setenv("FOXESS_EXPORTER_REALTIME_INTERVAL", "90s")
+	t.Setenv("EXPORTER_REALTIME_INTERVAL", "90s")
 
 	cfg, err := config.Load(path)
 	require.NoError(t, err)
@@ -225,8 +225,8 @@ exporter:
   backfill_max_age: 72h
 `)
 	// Override both backfill settings via env vars.
-	t.Setenv("FOXESS_EXPORTER_BACKFILL_ENABLED", "false")
-	t.Setenv("FOXESS_EXPORTER_BACKFILL_MAX_AGE", "48h")
+	t.Setenv("EXPORTER_BACKFILL_ENABLED", "false")
+	t.Setenv("EXPORTER_BACKFILL_MAX_AGE", "48h")
 
 	cfg, err := config.Load(path)
 	require.NoError(t, err)

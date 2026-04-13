@@ -57,19 +57,22 @@ type LogConfig struct {
 }
 
 // Load reads configuration from the given file path and merges environment
-// variables (prefix FOXESS_).  Environment variables override file values.
+// variables.  Environment variables override file values.
 //
-// Supported env vars (all optional if set in config file):
+// The env var name is the config key with dots replaced by underscores,
+// uppercased — no extra prefix.  For example:
 //
-//	FOXESS_FOXESS_API_KEY
-//	FOXESS_FOXESS_BASE_URL
-//	FOXESS_FOXESS_DEVICE_SN
-//	FOXESS_INFLUXDB_HOST
-//	FOXESS_INFLUXDB_TOKEN
-//	FOXESS_INFLUXDB_DATABASE
-//	FOXESS_EXPORTER_REALTIME_INTERVAL
-//	FOXESS_EXPORTER_REPORT_INTERVAL
-//	FOXESS_LOG_LEVEL
+//	FOXESS_API_KEY          → foxess.api_key
+//	FOXESS_BASE_URL         → foxess.base_url
+//	FOXESS_DEVICE_SN        → foxess.device_sn
+//	INFLUXDB_HOST           → influxdb.host
+//	INFLUXDB_TOKEN          → influxdb.token
+//	INFLUXDB_DATABASE       → influxdb.database
+//	EXPORTER_REALTIME_INTERVAL → exporter.realtime_interval
+//	EXPORTER_REPORT_INTERVAL   → exporter.report_interval
+//	EXPORTER_BACKFILL_ENABLED  → exporter.backfill_enabled
+//	EXPORTER_BACKFILL_MAX_AGE  → exporter.backfill_max_age
+//	LOG_LEVEL               → log.level
 func Load(cfgFile string) (*Config, error) {
 	v := viper.New()
 
@@ -92,7 +95,8 @@ func Load(cfgFile string) (*Config, error) {
 		v.AddConfigPath("/etc/foxess-exporter")
 	}
 
-	v.SetEnvPrefix("FOXESS")
+	// No prefix: the top-level section name (foxess, influxdb, exporter, log)
+	// already acts as the natural namespace, e.g. FOXESS_API_KEY, INFLUXDB_HOST.
 	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	v.AutomaticEnv()
 
@@ -117,13 +121,13 @@ func Load(cfgFile string) (*Config, error) {
 
 func (c *Config) validate() error {
 	if c.FoxESS.APIKey == "" {
-		return fmt.Errorf("foxess.api_key (or FOXESS_FOXESS_API_KEY) is required")
+		return fmt.Errorf("foxess.api_key (or FOXESS_API_KEY) is required")
 	}
 	if c.InfluxDB.Host == "" {
-		return fmt.Errorf("influxdb.host (or FOXESS_INFLUXDB_HOST) is required")
+		return fmt.Errorf("influxdb.host (or INFLUXDB_HOST) is required")
 	}
 	if c.InfluxDB.Token == "" {
-		return fmt.Errorf("influxdb.token (or FOXESS_INFLUXDB_TOKEN) is required")
+		return fmt.Errorf("influxdb.token (or INFLUXDB_TOKEN) is required")
 	}
 	if c.Exporter.RealtimeInterval < 10*time.Second {
 		return fmt.Errorf("exporter.realtime_interval must be >= 10s (FoxESS rate limits)")

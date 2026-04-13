@@ -75,15 +75,17 @@ log:
 
 | Variable | Equivalent config key |
 |---|---|
-| `FOXESS_FOXESS_API_KEY` | `foxess.api_key` |
-| `FOXESS_FOXESS_DEVICE_SN` | `foxess.device_sn` |
-| `FOXESS_FOXESS_BASE_URL` | `foxess.base_url` |
-| `FOXESS_INFLUXDB_HOST` | `influxdb.host` |
-| `FOXESS_INFLUXDB_TOKEN` | `influxdb.token` |
-| `FOXESS_INFLUXDB_DATABASE` | `influxdb.database` |
-| `FOXESS_EXPORTER_REALTIME_INTERVAL` | `exporter.realtime_interval` |
-| `FOXESS_EXPORTER_REPORT_INTERVAL` | `exporter.report_interval` |
-| `FOXESS_LOG_LEVEL` | `log.level` |
+| `FOXESS_API_KEY` | `foxess.api_key` |
+| `FOXESS_DEVICE_SN` | `foxess.device_sn` |
+| `FOXESS_BASE_URL` | `foxess.base_url` |
+| `INFLUXDB_HOST` | `influxdb.host` |
+| `INFLUXDB_TOKEN` | `influxdb.token` |
+| `INFLUXDB_DATABASE` | `influxdb.database` |
+| `EXPORTER_REALTIME_INTERVAL` | `exporter.realtime_interval` |
+| `EXPORTER_REPORT_INTERVAL` | `exporter.report_interval` |
+| `EXPORTER_BACKFILL_ENABLED` | `exporter.backfill_enabled` |
+| `EXPORTER_BACKFILL_MAX_AGE` | `exporter.backfill_max_age` |
+| `LOG_LEVEL` | `log.level` |
 
 ---
 
