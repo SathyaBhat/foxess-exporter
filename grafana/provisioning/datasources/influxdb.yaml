@@ -1,0 +1,16 @@
+apiVersion: 1
+
+datasources:
+  - name: InfluxDB-FoxESS
+    type: influxdb
+    access: proxy
+    url: http://influxdb:8086
+    jsonData:
+      version: Flux
+      organization: ""
+      defaultBucket: foxess
+      tlsSkipVerify: true
+    secureJsonData:
+      token: "${INFLUXDB_TOKEN}"
+    isDefault: true
+    editable: false

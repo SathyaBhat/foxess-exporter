@@ -1,0 +1,21 @@
+# FoxESS Exporter — standalone compose for a home server where InfluxDB and
+# Grafana are already running (e.g. via Dokploy / another compose stack).
+#
+# Usage:
+#   cp .env.example .env
+#   $EDITOR .env          # fill in your API key, InfluxDB token, etc.
+#   docker compose -f docker-compose.standalone.yaml up -d
+
+services:
+  foxess-exporter:
+    build: .
+    container_name: foxess-exporter
+    restart: unless-stopped
+    env_file:
+      - path: .env
+    networks:
+      - dokploy-network
+
+networks:
+  dokploy-network:
+    external: true

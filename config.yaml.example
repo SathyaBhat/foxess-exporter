@@ -1,0 +1,47 @@
+foxess:
+  # Your API key from FoxESS Cloud → Personal Centre → API Management
+  api_key: "YOUR_FOXESS_API_KEY"
+
+  # Base URL – do not change unless FoxESS move their servers
+  base_url: "https://www.foxesscloud.com"
+
+  # Serial number of your inverter.
+  # Leave empty ("") to auto-discover the first inverter on the account.
+  # If you have multiple inverters, set this explicitly.
+  device_sn: ""
+
+influxdb:
+  # InfluxDB v3 host.  For InfluxDB Cloud use your cluster URL, e.g.:
+  #   https://us-east-1-1.aws.cloud2.influxdata.com
+  # For a local OSS / Enterprise instance:
+  #   http://localhost:8086
+  host: "http://localhost:8086"
+
+  # InfluxDB v3 auth token (all-access or a scoped write token for the database)
+  token: "YOUR_INFLUXDB_TOKEN"
+
+  # InfluxDB v3 database (equivalent to a bucket in v2).
+  # Created automatically if your token has permission to do so.
+  database: "foxess"
+
+exporter:
+  # How often to poll the real-time endpoint.
+  # FoxESS limits: 1 req/sec, 1440 calls/day per inverter.
+  # 60s = exactly 1440 calls/day → safe maximum.
+  realtime_interval: 60s
+
+  # How often to refresh the daily energy-total report.
+  report_interval: 5m
+
+  # On startup, fill any gap between the newest InfluxDB point and now by
+  # querying the FoxESS history endpoint (max 24 h per request).
+  # Set to false to disable (e.g. if you share the 1440/day budget tightly).
+  backfill_enabled: true
+
+  # How far back to look when backfilling.  Each 24h window costs 1 API call.
+  # Default 168h (7 days).  History beyond ~30 days may not be available.
+  backfill_max_age: 168h
+
+log:
+  # One of: debug, info, warn, error
+  level: "info"

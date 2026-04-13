@@ -1,0 +1,10 @@
+# secrets — never commit the real .env
+.env
+
+# built binary
+foxess-exporter
+
+# editor / OS noise
+.DS_Store
+*.swp
+*~
