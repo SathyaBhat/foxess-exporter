@@ -218,17 +218,17 @@ func (e *Exporter) collectReport(ctx context.Context) {
 
 	var pts []influx.ReportPoint
 	for _, r := range results {
-		for _, dp := range r.Data {
-			if dp.Value == 0 {
+		for i, v := range r.Values {
+			if v == 0 {
 				continue
 			}
-			hourTs := date.Add(time.Duration(dp.Index) * time.Hour)
+			hourTs := date.Add(time.Duration(i) * time.Hour)
 			pts = append(pts, influx.ReportPoint{
 				DeviceSN:    e.deviceSN,
 				StationName: e.stationName,
 				Timestamp:   hourTs,
 				Variable:    r.Variable,
-				Value:       dp.Value,
+				Value:       v,
 				Unit:        r.Unit,
 			})
 		}
@@ -243,8 +243,8 @@ func (e *Exporter) collectReport(ctx context.Context) {
 	totals := make(map[string]float64)
 	for _, r := range results {
 		var sum float64
-		for _, dp := range r.Data {
-			sum += dp.Value
+		for _, v := range r.Values {
+			sum += v
 		}
 		totals[r.Variable] = sum
 	}

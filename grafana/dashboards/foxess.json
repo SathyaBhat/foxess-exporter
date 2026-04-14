@@ -94,7 +94,7 @@
           ]
         }
       },
-      "title": "☀️ PV Power",
+      "title": "☀️ Solar Generation",
       "type": "stat",
       "targets": [
         {
@@ -103,7 +103,7 @@
             "uid": "${DS_INFLUXDB-FOXESS}"
           },
           "refId": "A",
-          "rawSql": "SELECT \"pvPower\" AS \"value\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= now() - INTERVAL '10 minutes' ORDER BY time DESC LIMIT 1",
+          "rawSql": "SELECT time, \"generationPower\" AS \"value\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= now() - INTERVAL '10 minutes' ORDER BY time DESC LIMIT 1",
           "rawQuery": true
         }
       ]
@@ -171,7 +171,7 @@
             "uid": "${DS_INFLUXDB-FOXESS}"
           },
           "refId": "A",
-          "rawSql": "SELECT \"SoC\" AS \"value\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= now() - INTERVAL '10 minutes' ORDER BY time DESC LIMIT 1",
+          "rawSql": "SELECT time, \"SoC\" AS \"value\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= now() - INTERVAL '10 minutes' ORDER BY time DESC LIMIT 1",
           "rawQuery": true
         }
       ]
@@ -228,7 +228,7 @@
             "uid": "${DS_INFLUXDB-FOXESS}"
           },
           "refId": "A",
-          "rawSql": "SELECT \"batChargePower\" AS \"value\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= now() - INTERVAL '10 minutes' ORDER BY time DESC LIMIT 1",
+          "rawSql": "SELECT time, \"batChargePower\" AS \"value\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= now() - INTERVAL '10 minutes' ORDER BY time DESC LIMIT 1",
           "rawQuery": true
         }
       ]
@@ -285,7 +285,7 @@
             "uid": "${DS_INFLUXDB-FOXESS}"
           },
           "refId": "A",
-          "rawSql": "SELECT \"batDischargePower\" AS \"value\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= now() - INTERVAL '10 minutes' ORDER BY time DESC LIMIT 1",
+          "rawSql": "SELECT time, \"batDischargePower\" AS \"value\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= now() - INTERVAL '10 minutes' ORDER BY time DESC LIMIT 1",
           "rawQuery": true
         }
       ]
@@ -346,7 +346,7 @@
             "uid": "${DS_INFLUXDB-FOXESS}"
           },
           "refId": "A",
-          "rawSql": "SELECT \"loadsPower\" AS \"value\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= now() - INTERVAL '10 minutes' ORDER BY time DESC LIMIT 1",
+          "rawSql": "SELECT time, \"loadsPower\" AS \"value\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= now() - INTERVAL '10 minutes' ORDER BY time DESC LIMIT 1",
           "rawQuery": true
         }
       ]
@@ -407,7 +407,7 @@
             "uid": "${DS_INFLUXDB-FOXESS}"
           },
           "refId": "A",
-          "rawSql": "SELECT \"gridConsumptionPower\" AS \"value\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= now() - INTERVAL '10 minutes' ORDER BY time DESC LIMIT 1",
+          "rawSql": "SELECT time, \"gridConsumptionPower\" AS \"value\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= now() - INTERVAL '10 minutes' ORDER BY time DESC LIMIT 1",
           "rawQuery": true
         }
       ]
@@ -445,7 +445,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "PV Power"
+              "options": "Solar Generation"
             },
             "properties": [
               {
@@ -565,7 +565,7 @@
             "uid": "${DS_INFLUXDB-FOXESS}"
           },
           "refId": "A",
-          "rawSql": "SELECT time, \"pvPower\" AS \"PV Power\", \"loadsPower\" AS \"House Load\", \"feedinPower\" AS \"Feed-in Power\", \"gridConsumptionPower\" AS \"Grid Import\", \"batChargePower\" AS \"Bat Charge\", \"batDischargePower\" AS \"Bat Discharge\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= $__timeFrom AND time <= $__timeTo ORDER BY time ASC",
+          "rawSql": "SELECT time, \"generationPower\" AS \"Solar Generation\", \"loadsPower\" AS \"House Load\", \"feedinPower\" AS \"Feed-in Power\", \"gridConsumptionPower\" AS \"Grid Import\", \"batChargePower\" AS \"Bat Charge\", \"batDischargePower\" AS \"Bat Discharge\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= $__timeFrom AND time <= $__timeTo ORDER BY time ASC",
           "rawQuery": true
         }
       ]
@@ -692,11 +692,11 @@
         "justifyMode": "center",
         "reduceOptions": {
           "calcs": [
-            "sum"
+            "lastNotNull"
           ]
         }
       },
-      "title": "☀️ Today Generated",
+      "title": "☀️ Today Yield",
       "type": "stat",
       "targets": [
         {
@@ -705,7 +705,7 @@
             "uid": "${DS_INFLUXDB-FOXESS}"
           },
           "refId": "A",
-          "rawSql": "SELECT time, value_kwh FROM \"inverter_report\" WHERE device_sn = '$device_sn' AND variable = 'generation' AND time >= $__timeFrom AND time <= $__timeTo",
+          "rawSql": "SELECT time, \"todayYield\" AS \"value\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= now() - INTERVAL '10 minutes' ORDER BY time DESC LIMIT 1",
           "rawQuery": true
         }
       ]
@@ -942,21 +942,6 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Generation"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#F4D03F",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
               "options": "Feed-in"
             },
             "properties": [
@@ -1046,7 +1031,7 @@
             "uid": "${DS_INFLUXDB-FOXESS}"
           },
           "refId": "A",
-          "rawSql": "SELECT time, SUM(CASE WHEN variable = 'generation'           THEN value_kwh END) AS \"Generation\", SUM(CASE WHEN variable = 'feedin'               THEN value_kwh END) AS \"Feed-in\", SUM(CASE WHEN variable = 'gridConsumption'      THEN value_kwh END) AS \"Grid Import\", SUM(CASE WHEN variable = 'chargeEnergyToTal'    THEN value_kwh END) AS \"Bat Charged\", SUM(CASE WHEN variable = 'dischargeEnergyToTal' THEN value_kwh END) AS \"Bat Discharged\" FROM \"inverter_report\" WHERE device_sn = '$device_sn' AND time >= $__timeFrom AND time <= $__timeTo GROUP BY time ORDER BY time ASC",
+          "rawSql": "SELECT time, SUM(CASE WHEN variable = 'feedin'               THEN value_kwh END) AS \"Feed-in\", SUM(CASE WHEN variable = 'gridConsumption'      THEN value_kwh END) AS \"Grid Import\", SUM(CASE WHEN variable = 'chargeEnergyToTal'    THEN value_kwh END) AS \"Bat Charged\", SUM(CASE WHEN variable = 'dischargeEnergyToTal' THEN value_kwh END) AS \"Bat Discharged\" FROM \"inverter_report\" WHERE device_sn = '$device_sn' AND time >= $__timeFrom AND time <= $__timeTo GROUP BY time ORDER BY time ASC",
           "rawQuery": true
         }
       ]

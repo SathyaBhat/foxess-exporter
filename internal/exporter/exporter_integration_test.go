@@ -162,25 +162,18 @@ func TestIntegration_FullCycle_WritesRealtimeAndReport(t *testing.T) {
 			},
 		},
 		reportData: []foxess.ReportQueryResult{
-			{
-				Variable: "generation", Unit: "kWh",
-				Data: []foxess.ReportPoint{
-					{Index: 8, Value: 1.5},
-					{Index: 9, Value: 3.2},
-					{Index: 10, Value: 2.8},
-				},
-			},
-			{
-				Variable: "feedin", Unit: "kWh",
-				Data: []foxess.ReportPoint{
-					{Index: 9, Value: 0.8},
-					{Index: 10, Value: 1.1},
-				},
-			},
-			{
-				Variable: "gridConsumption", Unit: "kWh",
-				Data: []foxess.ReportPoint{{Index: 7, Value: 0.2}},
-			},
+			func() foxess.ReportQueryResult {
+				v := make([]float64, 24); v[8] = 1.5; v[9] = 3.2; v[10] = 2.8
+				return foxess.ReportQueryResult{Variable: "generation", Unit: "kWh", Values: v}
+			}(),
+			func() foxess.ReportQueryResult {
+				v := make([]float64, 24); v[9] = 0.8; v[10] = 1.1
+				return foxess.ReportQueryResult{Variable: "feedin", Unit: "kWh", Values: v}
+			}(),
+			func() foxess.ReportQueryResult {
+				v := make([]float64, 24); v[7] = 0.2
+				return foxess.ReportQueryResult{Variable: "gridConsumption", Unit: "kWh", Values: v}
+			}(),
 		},
 	}
 	foxSrv := httptest.NewServer(fakeFox)
@@ -295,7 +288,10 @@ func TestIntegration_AutoDiscover_UsesFirstDevice(t *testing.T) {
 			}},
 		},
 		reportData: []foxess.ReportQueryResult{
-			{Variable: "generation", Data: []foxess.ReportPoint{{Index: 9, Value: 0.5}}},
+			func() foxess.ReportQueryResult {
+				v := make([]float64, 24); v[9] = 0.5
+				return foxess.ReportQueryResult{Variable: "generation", Values: v}
+			}(),
 		},
 	}
 	foxSrv := httptest.NewServer(fakeFox)
@@ -401,7 +397,10 @@ func TestIntegration_Backfill_HistoryDataWrittenToInflux(t *testing.T) {
 			}},
 		},
 		reportData: []foxess.ReportQueryResult{
-			{Variable: "generation", Data: []foxess.ReportPoint{{Index: 8, Value: 1.2}}},
+			func() foxess.ReportQueryResult {
+				v := make([]float64, 24); v[8] = 1.2
+				return foxess.ReportQueryResult{Variable: "generation", Values: v}
+			}(),
 		},
 	}
 

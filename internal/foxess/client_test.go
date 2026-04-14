@@ -327,21 +327,15 @@ func TestClient_HistoryData_SendsTimeRange(t *testing.T) {
 // --------------------------------------------------------------------------
 
 func TestClient_DailyReport_Success(t *testing.T) {
+	genValues := make([]float64, 24)
+	genValues[8] = 0.5
+	genValues[9] = 1.2
+	genValues[10] = 2.1
+	feedinValues := make([]float64, 24)
+	feedinValues[9] = 0.3
 	result := []map[string]any{
-		{
-			"variable": "generation", "unit": "kWh", "name": "Generation",
-			"data": []map[string]any{
-				{"index": 8, "value": 0.5},
-				{"index": 9, "value": 1.2},
-				{"index": 10, "value": 2.1},
-			},
-		},
-		{
-			"variable": "feedin", "unit": "kWh", "name": "Feed-in",
-			"data": []map[string]any{
-				{"index": 9, "value": 0.3},
-			},
-		},
+		{"variable": "generation", "unit": "kWh", "name": "Generation", "values": genValues},
+		{"variable": "feedin", "unit": "kWh", "name": "Feed-in", "values": feedinValues},
 	}
 	srv := newServer(t, "/op/v0/device/report/query", http.StatusOK, apiResp(0, result))
 
@@ -351,9 +345,10 @@ func TestClient_DailyReport_Success(t *testing.T) {
 	require.Len(t, got, 2)
 	assert.Equal(t, "generation", got[0].Variable)
 	assert.Equal(t, "kWh", got[0].Unit)
-	require.Len(t, got[0].Data, 3)
-	assert.Equal(t, 8, got[0].Data[0].Index)
-	assert.InDelta(t, 0.5, got[0].Data[0].Value, 1e-9)
+	require.Len(t, got[0].Values, 24)
+	assert.InDelta(t, 0.5, got[0].Values[8], 1e-9)
+	assert.InDelta(t, 1.2, got[0].Values[9], 1e-9)
+	assert.InDelta(t, 2.1, got[0].Values[10], 1e-9)
 }
 
 func TestClient_DailyReport_SendsCorrectDateAndVariables(t *testing.T) {

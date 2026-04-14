@@ -270,15 +270,10 @@ type ReportQueryRequest struct {
 }
 
 type ReportQueryResult struct {
-	Variable string        `json:"variable"`
-	Unit     string        `json:"unit"`
-	Name     string        `json:"name"`
-	Data     []ReportPoint `json:"data"`
-}
-
-type ReportPoint struct {
-	Index int     `json:"index"` // hour-of-day (dimension=day), day (month), month (year)
-	Value float64 `json:"value"`
+	Variable string    `json:"variable"`
+	Unit     string    `json:"unit"`
+	Name     string    `json:"name"`
+	Values   []float64 `json:"values"` // one entry per hour (index = hour-of-day)
 }
 
 // ReportVariables are the energy-total variables supported by the report endpoint.

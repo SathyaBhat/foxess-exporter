@@ -356,21 +356,15 @@ func TestExporter_CollectReport_NonZeroHoursBecomePoints(t *testing.T) {
 			return []foxess.RealQueryResult{{DeviceSN: "SN001"}}, nil
 		},
 		dailyReportFn: func(sn string, _ time.Time) ([]foxess.ReportQueryResult, error) {
+			genValues := make([]float64, 24)
+			genValues[8] = 0.5
+			genValues[9] = 1.2
+			// index 10 = 0.0 (zero — should be skipped)
+			feedinValues := make([]float64, 24)
+			feedinValues[9] = 0.3
 			return []foxess.ReportQueryResult{
-				{
-					Variable: "generation", Unit: "kWh",
-					Data: []foxess.ReportPoint{
-						{Index: 8, Value: 0.5},
-						{Index: 9, Value: 1.2},
-						{Index: 10, Value: 0.0}, // zero — should be skipped
-					},
-				},
-				{
-					Variable: "feedin", Unit: "kWh",
-					Data: []foxess.ReportPoint{
-						{Index: 9, Value: 0.3},
-					},
-				},
+				{Variable: "generation", Unit: "kWh", Values: genValues},
+				{Variable: "feedin", Unit: "kWh", Values: feedinValues},
 			}, nil
 		},
 	}
@@ -413,7 +407,7 @@ func TestExporter_CollectReport_AllZero_WritesEmptyBatch(t *testing.T) {
 		},
 		dailyReportFn: func(sn string, _ time.Time) ([]foxess.ReportQueryResult, error) {
 			return []foxess.ReportQueryResult{
-				{Variable: "generation", Data: []foxess.ReportPoint{{Index: 0, Value: 0}}},
+				{Variable: "generation", Values: []float64{0}},
 			}, nil
 		},
 	}
