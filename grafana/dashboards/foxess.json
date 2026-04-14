@@ -103,7 +103,7 @@
             "uid": "${DS_INFLUXDB-FOXESS}"
           },
           "refId": "A",
-          "rawSql": "SELECT time, \"generationPower\" AS \"value\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= now() - INTERVAL '10 minutes' ORDER BY time DESC LIMIT 1",
+          "rawSql": "SELECT time, \"feedinPower\" + \"loadsPower\" + \"batChargePower\" - \"batDischargePower\" - \"gridConsumptionPower\" AS \"value\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= now() - INTERVAL '10 minutes' ORDER BY time DESC LIMIT 1",
           "rawQuery": true
         }
       ]
@@ -565,7 +565,7 @@
             "uid": "${DS_INFLUXDB-FOXESS}"
           },
           "refId": "A",
-          "rawSql": "SELECT time, \"generationPower\" AS \"Solar Generation\", \"loadsPower\" AS \"House Load\", \"feedinPower\" AS \"Feed-in Power\", \"gridConsumptionPower\" AS \"Grid Import\", \"batChargePower\" AS \"Bat Charge\", \"batDischargePower\" AS \"Bat Discharge\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= $__timeFrom AND time <= $__timeTo ORDER BY time ASC",
+          "rawSql": "SELECT time, \"feedinPower\" + \"loadsPower\" + \"batChargePower\" - \"batDischargePower\" - \"gridConsumptionPower\" AS \"Solar Generation\", \"loadsPower\" AS \"House Load\", \"feedinPower\" AS \"Feed-in Power\", \"gridConsumptionPower\" AS \"Grid Import\", \"batChargePower\" AS \"Bat Charge\", \"batDischargePower\" AS \"Bat Discharge\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= $__timeFrom AND time <= $__timeTo ORDER BY time ASC",
           "rawQuery": true
         }
       ]
@@ -692,64 +692,11 @@
         "justifyMode": "center",
         "reduceOptions": {
           "calcs": [
-            "lastNotNull"
-          ]
-        }
-      },
-      "title": "☀️ Today Yield",
-      "type": "stat",
-      "targets": [
-        {
-          "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUXDB-FOXESS}"
-          },
-          "refId": "A",
-          "rawSql": "SELECT time, \"todayYield\" AS \"value\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= now() - INTERVAL '10 minutes' ORDER BY time DESC LIMIT 1",
-          "rawQuery": true
-        }
-      ]
-    },
-    {
-      "datasource": {
-        "type": "influxdb",
-        "uid": "${DS_INFLUXDB-FOXESS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "kwatth"
-        }
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 4,
-        "y": 17
-      },
-      "id": 21,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "area",
-        "justifyMode": "center",
-        "reduceOptions": {
-          "calcs": [
             "sum"
           ]
         }
       },
-      "title": "🔌 Today Feed-in",
+      "title": "☀️ Today Solar (feed-in)",
       "type": "stat",
       "targets": [
         {
