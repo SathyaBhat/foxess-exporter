@@ -103,7 +103,7 @@
             "uid": "${DS_INFLUXDB-FOXESS}"
           },
           "refId": "A",
-          "rawSql": "SELECT last(\"pvPower\") AS \"value\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= now() - INTERVAL '10 minutes'",
+          "rawSql": "SELECT \"pvPower\" AS \"value\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= now() - INTERVAL '10 minutes' ORDER BY time DESC LIMIT 1",
           "rawQuery": true
         }
       ]
@@ -171,7 +171,7 @@
             "uid": "${DS_INFLUXDB-FOXESS}"
           },
           "refId": "A",
-          "rawSql": "SELECT last(\"SoC\") AS \"value\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= now() - INTERVAL '10 minutes'",
+          "rawSql": "SELECT \"SoC\" AS \"value\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= now() - INTERVAL '10 minutes' ORDER BY time DESC LIMIT 1",
           "rawQuery": true
         }
       ]
@@ -228,7 +228,7 @@
             "uid": "${DS_INFLUXDB-FOXESS}"
           },
           "refId": "A",
-          "rawSql": "SELECT last(\"batChargePower\") AS \"value\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= now() - INTERVAL '10 minutes'",
+          "rawSql": "SELECT \"batChargePower\" AS \"value\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= now() - INTERVAL '10 minutes' ORDER BY time DESC LIMIT 1",
           "rawQuery": true
         }
       ]
@@ -285,7 +285,7 @@
             "uid": "${DS_INFLUXDB-FOXESS}"
           },
           "refId": "A",
-          "rawSql": "SELECT last(\"batDischargePower\") AS \"value\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= now() - INTERVAL '10 minutes'",
+          "rawSql": "SELECT \"batDischargePower\" AS \"value\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= now() - INTERVAL '10 minutes' ORDER BY time DESC LIMIT 1",
           "rawQuery": true
         }
       ]
@@ -346,7 +346,7 @@
             "uid": "${DS_INFLUXDB-FOXESS}"
           },
           "refId": "A",
-          "rawSql": "SELECT last(\"loadsPower\") AS \"value\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= now() - INTERVAL '10 minutes'",
+          "rawSql": "SELECT \"loadsPower\" AS \"value\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= now() - INTERVAL '10 minutes' ORDER BY time DESC LIMIT 1",
           "rawQuery": true
         }
       ]
@@ -407,7 +407,7 @@
             "uid": "${DS_INFLUXDB-FOXESS}"
           },
           "refId": "A",
-          "rawSql": "SELECT last(\"gridConsumptionPower\") AS \"value\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= now() - INTERVAL '10 minutes'",
+          "rawSql": "SELECT \"gridConsumptionPower\" AS \"value\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= now() - INTERVAL '10 minutes' ORDER BY time DESC LIMIT 1",
           "rawQuery": true
         }
       ]
