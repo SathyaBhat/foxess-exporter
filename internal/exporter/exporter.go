@@ -204,7 +204,10 @@ func (e *Exporter) collectRealtime(ctx context.Context) {
 // --------------------------------------------------------------------------
 
 func (e *Exporter) collectReport(ctx context.Context) {
+	// Use local time for the FoxESS API call (it serves reports by local date).
+	// Use UTC for the stored timestamps so Grafana's timezone shift works correctly.
 	now := time.Now()
+	nowUTC := now.UTC()
 	results, err := e.fox.DailyReport(e.deviceSN, now)
 	if err != nil {
 		e.log.Error("report query failed", zap.Error(err))
@@ -213,8 +216,8 @@ func (e *Exporter) collectReport(ctx context.Context) {
 
 	// The report endpoint returns per-hour buckets for the day.
 	// We store each non-zero bucket as a separate InfluxDB point timestamped
-	// to the start of that hour.
-	date := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
+	// to the start of that hour in true UTC so Grafana displays correct local times.
+	date := time.Date(nowUTC.Year(), nowUTC.Month(), nowUTC.Day(), 0, 0, 0, 0, time.UTC)
 
 	var pts []influx.ReportPoint
 	for _, r := range results {
