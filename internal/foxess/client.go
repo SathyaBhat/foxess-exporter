@@ -12,6 +12,7 @@ import (
 	"bytes"
 	"crypto/md5" //nolint:gosec // FoxESS mandates MD5 for request signing
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -19,6 +20,10 @@ import (
 	"strings"
 	"time"
 )
+
+// ErrRateLimit is returned when the FoxESS API responds with errno 40402
+// (daily call quota exceeded or per-second frequency limit hit).
+var ErrRateLimit = errors.New("foxess rate limit")
 
 const (
 	pathDeviceList    = "/op/v0/device/list"
@@ -113,6 +118,9 @@ func doRequest[T any](c *Client, method, path string, body any) (T, error) {
 		return zero, fmt.Errorf("decode response: %w", err)
 	}
 	if parsed.Errno != 0 {
+		if parsed.Errno == 40402 {
+			return zero, fmt.Errorf("API error %d: %s: %w", parsed.Errno, parsed.Msg, ErrRateLimit)
+		}
 		return zero, fmt.Errorf("API error %d: %s", parsed.Errno, parsed.Msg)
 	}
 	return parsed.Result, nil

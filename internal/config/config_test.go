@@ -79,7 +79,7 @@ influxdb:
 
 	assert.Equal(t, "https://www.foxesscloud.com", cfg.FoxESS.BaseURL, "default base_url")
 	assert.Equal(t, "foxess", cfg.InfluxDB.Database, "default database")
-	assert.Equal(t, 60*time.Second, cfg.Exporter.RealtimeInterval, "default realtime_interval")
+	assert.Equal(t, 120*time.Second, cfg.Exporter.RealtimeInterval, "default realtime_interval")
 	assert.Equal(t, 5*time.Minute, cfg.Exporter.ReportInterval, "default report_interval")
 	assert.Equal(t, "info", cfg.Log.Level, "default log level")
 }

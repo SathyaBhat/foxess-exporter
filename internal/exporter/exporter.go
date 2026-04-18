@@ -4,6 +4,7 @@ package exporter
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -164,6 +165,10 @@ func (e *Exporter) resolveStationName(ctx context.Context) error {
 func (e *Exporter) collectRealtime(ctx context.Context) {
 	results, err := e.fox.RealTimeData([]string{e.deviceSN}, foxess.WatchedVariables)
 	if err != nil {
+		if errors.Is(err, foxess.ErrRateLimit) {
+			e.log.Warn("real-time query skipped: FoxESS rate limit hit; will retry next tick", zap.Error(err))
+			return
+		}
 		e.log.Error("real-time query failed", zap.Error(err))
 		return
 	}
@@ -210,6 +215,10 @@ func (e *Exporter) collectReport(ctx context.Context) {
 	now := time.Now()
 	results, err := e.fox.DailyReport(e.deviceSN, now)
 	if err != nil {
+		if errors.Is(err, foxess.ErrRateLimit) {
+			e.log.Warn("report query skipped: FoxESS rate limit hit; will retry next tick", zap.Error(err))
+			return
+		}
 		e.log.Error("report query failed", zap.Error(err))
 		return
 	}

@@ -78,7 +78,7 @@ func Load(cfgFile string) (*Config, error) {
 
 	// Defaults
 	v.SetDefault("foxess.base_url", "https://www.foxesscloud.com")
-	v.SetDefault("exporter.realtime_interval", 60*time.Second)
+	v.SetDefault("exporter.realtime_interval", 120*time.Second)
 	v.SetDefault("exporter.report_interval", 5*time.Minute)
 	v.SetDefault("exporter.backfill_enabled", true)
 	v.SetDefault("exporter.backfill_max_age", 7*24*time.Hour)
