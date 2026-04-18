@@ -119,7 +119,7 @@ func (e *Exporter) resolveDevice(ctx context.Context) error {
 	}
 
 	e.log.Info("no device_sn configured, auto-discovering devices…")
-	devices, err := e.fox.ListDevices()
+	devices, err := e.listDevicesWithBackoff(ctx)
 	if err != nil {
 		return fmt.Errorf("auto-discover devices: %w", err)
 	}
@@ -142,6 +142,33 @@ func (e *Exporter) resolveDevice(ctx context.Context) error {
 		zap.String("product_type", devices[0].ProductType),
 	)
 	return nil
+}
+
+// listDevicesWithBackoff calls ListDevices, retrying on rate-limit errors with
+// exponential backoff (5s, 10s, 20s, 40s, …) up to 5 minutes between attempts.
+func (e *Exporter) listDevicesWithBackoff(ctx context.Context) ([]foxess.Device, error) {
+	backoff := 5 * time.Second
+	const maxBackoff = 5 * time.Minute
+	for {
+		devices, err := e.fox.ListDevices()
+		if err == nil {
+			return devices, nil
+		}
+		if !errors.Is(err, foxess.ErrRateLimit) {
+			return nil, err
+		}
+		e.log.Warn("device list rate-limited; retrying after backoff",
+			zap.Duration("backoff", backoff), zap.Error(err))
+		select {
+		case <-ctx.Done():
+			return nil, ctx.Err()
+		case <-time.After(backoff):
+		}
+		backoff *= 2
+		if backoff > maxBackoff {
+			backoff = maxBackoff
+		}
+	}
 }
 
 func (e *Exporter) resolveStationName(ctx context.Context) error {
