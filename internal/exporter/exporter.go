@@ -212,6 +212,11 @@ func (e *Exporter) collectRealtime(ctx context.Context) {
 		for _, d := range r.Datas {
 			fields[d.Variable] = d.Value
 		}
+		if e.log.Core().Enabled(zap.DebugLevel) {
+			for _, d := range r.Datas {
+				e.log.Debug("api variable", zap.String("variable", d.Variable), zap.Float64("value", d.Value))
+			}
+		}
 
 		if err := e.influx.WriteRealtime(ctx, influx.RealtimePoint{
 			DeviceSN:    r.DeviceSN,

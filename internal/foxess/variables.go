@@ -25,7 +25,7 @@ var WatchedVariables = []string{
 	"feedinPower",            // Power exported to grid (positive = export) [kW]
 	"gridConsumptionPower",   // Power imported from grid                   [kW]
 	"meterPower",             // Grid meter power (+feed-in / -import)      [kW]
-	"meter2Power",            // AC-coupled solar inverter output (Gen Load) [kW]
+	"meterPower2",            // AC-coupled solar inverter output (Gen Load) [kW]
 
 	// ── Load ─────────────────────────────────────────────────────────────────
 	"loadsPower",        // Total house load                      [kW]
@@ -56,7 +56,7 @@ var FriendlyName = map[string]string{
 	"feedinPower":          "Feed-in Power",
 	"gridConsumptionPower": "Grid Consumption Power",
 	"meterPower":           "Grid Meter Power",
-	"meter2Power":          "Gen Load (AC-coupled Solar)",
+	"meterPower2":          "Gen Load (AC-coupled Solar)",
 	"loadsPower":           "House Load Power",
 	"RVolt":                "AC Voltage",
 	"RFreq":                "AC Frequency",
