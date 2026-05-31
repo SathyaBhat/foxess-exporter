@@ -606,12 +606,52 @@
           "max": 100,
           "custom": {
             "lineWidth": 2,
-            "fillOpacity": 20
+            "fillOpacity": 20,
+            "spanNulls": true
           }
-        }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Projection"
+            },
+            "properties": [
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "dash",
+                  "dash": [
+                    8,
+                    4
+                  ]
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 1
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "rgba(150,150,150,0.7)",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.spanNulls",
+                "value": true
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
-        "h": 10,
+        "h": 7,
         "w": 8,
         "x": 16,
         "y": 6
@@ -641,6 +681,62 @@
           },
           "refId": "A",
           "rawSql": "SELECT time, \"SoC\" AS \"Battery SoC\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= $__timeFrom AND time <= $__timeTo ORDER BY time ASC",
+          "rawQuery": true
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB-FOXESS}"
+          },
+          "refId": "B",
+          "rawSql": "WITH latest AS (SELECT \"SoC\", \"batChargePower\" - \"batDischargePower\" AS net_kw FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= now() - INTERVAL '10 minutes' ORDER BY time DESC LIMIT 1), calc AS (SELECT CAST(\"SoC\" AS DOUBLE) AS soc, net_kw, CASE WHEN net_kw > 0.05 THEN (100.0 - \"SoC\") / 100.0 * $battery_capacity_kwh / net_kw * 3600.0 WHEN net_kw < -0.05 THEN \"SoC\" / 100.0 * $battery_capacity_kwh / ABS(net_kw) * 3600.0 ELSE NULL END AS secs, CASE WHEN net_kw > 0.05 THEN 100.0 ELSE 0.0 END AS target FROM latest WHERE ABS(net_kw) > 0.05) SELECT now() AS time, soc AS \"Projection\" FROM calc UNION ALL SELECT CAST(CAST(now() AS BIGINT) + CAST(secs AS BIGINT) * 1000000000 AS TIMESTAMP) AS time, target AS \"Projection\" FROM calc ORDER BY time ASC",
+          "rawQuery": true
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB-FOXESS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "text",
+            "mode": "fixed"
+          },
+          "unit": "dateTimeAsLocal",
+          "noValue": "—"
+        }
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 8,
+        "x": 16,
+        "y": 13
+      },
+      "id": 12,
+      "options": {
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "textMode": "value"
+      },
+      "title": "🔋 Full / Empty At",
+      "type": "stat",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB-FOXESS}"
+          },
+          "refId": "A",
+          "rawSql": "WITH latest AS (SELECT \"SoC\", \"batChargePower\" - \"batDischargePower\" AS net_kw FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= now() - INTERVAL '10 minutes' ORDER BY time DESC LIMIT 1), calc AS (SELECT CASE WHEN net_kw > 0.05 THEN (100.0 - \"SoC\") / 100.0 * $battery_capacity_kwh / net_kw * 3600.0 WHEN net_kw < -0.05 THEN \"SoC\" / 100.0 * $battery_capacity_kwh / ABS(net_kw) * 3600.0 ELSE NULL END AS secs FROM latest WHERE ABS(net_kw) > 0.05) SELECT now() AS time, CAST(CAST(now() AS BIGINT) / 1000000 AS DOUBLE) + secs * 1000.0 AS \"Target Time\" FROM calc",
           "rawQuery": true
         }
       ]
@@ -1203,6 +1299,25 @@
         "refresh": 2,
         "sort": 1,
         "type": "query"
+      },
+      {
+        "hide": 0,
+        "label": "Battery Capacity (kWh)",
+        "name": "battery_capacity_kwh",
+        "options": [
+          {
+            "selected": true,
+            "text": "42",
+            "value": "42"
+          }
+        ],
+        "query": "42",
+        "current": {
+          "selected": true,
+          "text": "42",
+          "value": "42"
+        },
+        "type": "custom"
       }
     ]
   },
@@ -1214,5 +1329,5 @@
   "timezone": "browser",
   "title": "FoxESS Solar Dashboard",
   "uid": "foxess-solar-01",
-  "version": 1
+  "version": 2
 }
