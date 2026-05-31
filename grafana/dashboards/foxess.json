@@ -103,7 +103,7 @@
             "uid": "${DS_INFLUXDB-FOXESS}"
           },
           "refId": "A",
-          "rawSql": "SELECT time, \"meter2Power\" AS \"value\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= now() - INTERVAL '10 minutes' ORDER BY time DESC LIMIT 1",
+          "rawSql": "SELECT time, \"meterPower2\" AS \"value\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= now() - INTERVAL '10 minutes' ORDER BY time DESC LIMIT 1",
           "rawQuery": true
         }
       ]
@@ -565,7 +565,7 @@
             "uid": "${DS_INFLUXDB-FOXESS}"
           },
           "refId": "A",
-          "rawSql": "SELECT time, \"meter2Power\" AS \"Solar Generation\", \"loadsPower\" AS \"House Load\", \"feedinPower\" AS \"Feed-in Power\", \"gridConsumptionPower\" AS \"Grid Import\", \"batChargePower\" AS \"Bat Charge\", \"batDischargePower\" AS \"Bat Discharge\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= $__timeFrom AND time <= $__timeTo ORDER BY time ASC",
+          "rawSql": "SELECT time, \"meterPower2\" AS \"Solar Generation\", \"loadsPower\" AS \"House Load\", \"feedinPower\" AS \"Feed-in Power\", \"gridConsumptionPower\" AS \"Grid Import\", \"batChargePower\" AS \"Bat Charge\", \"batDischargePower\" AS \"Bat Discharge\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= $__timeFrom AND time <= $__timeTo ORDER BY time ASC",
           "rawQuery": true
         }
       ]

@@ -204,7 +204,7 @@ func (e *Exporter) collectRealtime(ctx context.Context) {
 	for _, r := range results {
 		// Pre-seed all watched variables with 0 so every column is always
 		// written to InfluxDB — even when the API omits a variable (e.g.
-		// meter2Power at night when the AC-coupled inverter is inactive).
+		// meterPower2 at night when the AC-coupled inverter is inactive).
 		fields := make(map[string]float64, len(foxess.WatchedVariables))
 		for _, v := range foxess.WatchedVariables {
 			fields[v] = 0
