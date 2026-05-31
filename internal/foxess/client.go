@@ -286,11 +286,12 @@ type ReportQueryResult struct {
 
 // ReportVariables are the energy-total variables supported by the report endpoint.
 var ReportVariables = []string{
-	"generation",          // PV generation (kWh)
-	"feedin",             // Feed-in to grid (kWh)
-	"gridConsumption",    // Imported from grid (kWh)
-	"chargeEnergyToTal",  // Battery charged (kWh)
+	"generation",           // PV generation (kWh)
+	"feedin",               // Feed-in to grid (kWh)
+	"gridConsumption",      // Imported from grid (kWh)
+	"chargeEnergyToTal",    // Battery charged (kWh)
 	"dischargeEnergyToTal", // Battery discharged (kWh)
+	"feedin2",              // AC-coupled solar energy via Meter 2 (kWh)
 }
 
 // DailyReport fetches today's hourly energy totals for the given device.
