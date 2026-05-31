@@ -296,6 +296,9 @@ func (e *Exporter) collectReport(ctx context.Context) {
 			sum += v
 		}
 		totals[r.Variable] = sum
+		if e.log.Core().Enabled(zap.DebugLevel) {
+			e.log.Debug("report variable", zap.String("variable", r.Variable), zap.String("unit", r.Unit), zap.Float64("total_kwh", sum))
+		}
 	}
 	e.log.Info("report collected",
 		zap.String("device_sn", e.deviceSN),
