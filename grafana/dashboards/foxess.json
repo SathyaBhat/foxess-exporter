@@ -724,6 +724,59 @@
             "mode": "absolute",
             "steps": [
               {
+                "color": "yellow",
+                "value": null
+              }
+            ]
+          },
+          "unit": "kwatth"
+        }
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 17
+      },
+      "id": 25,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ]
+        }
+      },
+      "title": "☀️ Today AC Solar (Gen Load)",
+      "type": "stat",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB-FOXESS}"
+          },
+          "refId": "A",
+          "rawSql": "SELECT time, \"meterPower2\" / 60.0 AS \"value\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= $__timeFrom AND time <= $__timeTo",
+          "rawQuery": true
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB-FOXESS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
                 "color": "orange",
                 "value": null
               }
@@ -945,6 +998,21 @@
                 }
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "AC Solar"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#F4D03F",
+                  "mode": "fixed"
+                }
+              }
+            ]
           }
         ]
       },
@@ -979,6 +1047,15 @@
           },
           "refId": "A",
           "rawSql": "SELECT time, SUM(CASE WHEN variable = 'feedin'               THEN value_kwh END) AS \"Feed-in\", SUM(CASE WHEN variable = 'gridConsumption'      THEN value_kwh END) AS \"Grid Import\", SUM(CASE WHEN variable = 'chargeEnergyToTal'    THEN value_kwh END) AS \"Bat Charged\", SUM(CASE WHEN variable = 'dischargeEnergyToTal' THEN value_kwh END) AS \"Bat Discharged\" FROM \"inverter_report\" WHERE device_sn = '$device_sn' AND time >= $__timeFrom AND time <= $__timeTo GROUP BY time ORDER BY time ASC",
+          "rawQuery": true
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB-FOXESS}"
+          },
+          "refId": "B",
+          "rawSql": "SELECT date_trunc('hour', time) AS time, SUM(\"meterPower2\") / 60.0 AS \"AC Solar\" FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= $__timeFrom AND time <= $__timeTo GROUP BY 1 ORDER BY 1 ASC",
           "rawQuery": true
         }
       ]
