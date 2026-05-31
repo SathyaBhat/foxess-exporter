@@ -291,6 +291,7 @@ var ReportVariables = []string{
 	"gridConsumption",      // Imported from grid (kWh)
 	"chargeEnergyToTal",    // Battery charged (kWh)
 	"dischargeEnergyToTal", // Battery discharged (kWh)
+	"gridConsumption2",     // AC-coupled solar energy via Meter 2 (kWh)
 }
 
 // DailyReport fetches today's hourly energy totals for the given device.
