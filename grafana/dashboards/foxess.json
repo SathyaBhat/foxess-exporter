@@ -689,7 +689,7 @@
             "uid": "${DS_INFLUXDB-FOXESS}"
           },
           "refId": "B",
-          "rawSql": "WITH latest AS (SELECT \"SoC\", \"batChargePower\" - \"batDischargePower\" AS net_kw FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= now() - INTERVAL '10 minutes' ORDER BY time DESC LIMIT 1), calc AS (SELECT CAST(\"SoC\" AS DOUBLE) AS soc, net_kw, CASE WHEN net_kw > 0.05 THEN (100.0 - \"SoC\") / 100.0 * $battery_capacity_kwh / net_kw * 3600.0 WHEN net_kw < -0.05 THEN \"SoC\" / 100.0 * $battery_capacity_kwh / ABS(net_kw) * 3600.0 ELSE NULL END AS secs, CASE WHEN net_kw > 0.05 THEN 100.0 ELSE 0.0 END AS target FROM latest WHERE ABS(net_kw) > 0.05) SELECT now() AS time, soc AS \"Projection\" FROM calc UNION ALL SELECT CAST(CAST(now() AS BIGINT) + CAST(secs AS BIGINT) * 1000000000 AS TIMESTAMP) AS time, target AS \"Projection\" FROM calc ORDER BY time ASC",
+          "rawSql": "WITH latest AS (SELECT \"SoC\", \"batChargePower\" - \"batDischargePower\" AS net_kw FROM \"inverter_realtime\" WHERE device_sn = '$device_sn' AND time >= now() - INTERVAL '10 minutes' ORDER BY time DESC LIMIT 1), calc AS (SELECT CAST(\"SoC\" AS DOUBLE) AS soc, CAST(now() AS BIGINT) AS now_ns, CASE WHEN net_kw > 0.05 THEN (100.0 - \"SoC\") / 100.0 * $battery_capacity_kwh / net_kw * 3600.0 WHEN net_kw < -0.05 THEN \"SoC\" / 100.0 * $battery_capacity_kwh / ABS(net_kw) * 3600.0 END AS secs, CASE WHEN net_kw > 0.05 THEN 100.0 ELSE 0.0 END AS target FROM latest WHERE ABS(net_kw) > 0.05) SELECT CAST(now_ns AS TIMESTAMP) AS time, soc AS \"Projection\" FROM calc UNION ALL SELECT CAST(now_ns + CAST(secs AS BIGINT) * 1000000000 AS TIMESTAMP) AS time, target AS \"Projection\" FROM calc ORDER BY time ASC",
           "rawQuery": true
         }
       ]
@@ -1323,11 +1323,11 @@
   },
   "time": {
     "from": "now-24h",
-    "to": "now"
+    "to": "now+6h"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "FoxESS Solar Dashboard",
   "uid": "foxess-solar-01",
-  "version": 2
+  "version": 3
 }
