@@ -10,6 +10,7 @@ services:
   foxess-exporter:
     build: .
     container_name: foxess-exporter
+    restart: unless-stopped
     dns:
       - 1.1.1.1
     env_file:
